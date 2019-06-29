@@ -24,11 +24,11 @@ def unknown(event, context):
                 "callback_id": key,
                 "attachment_type": "default",
                 "actions": [{
-                        "name": "username",
-                        "text": "Select a username...",
-                        "type": "select",
-                        "data_source": "users"
-                    },
+                    "name": "username",
+                    "text": "Select a username...",
+                    "type": "select",
+                    "data_source": "users"
+                },
                     {
                         "name": "discard",
                         "text": "Ignore",
@@ -41,12 +41,13 @@ def unknown(event, context):
                             "ok_text": "Yes",
                             "dismiss_text": "No"
                         }
-                    }
+                }
                 ]
             }
         ]
     }
     print(data)
-    foo = requests.post("https://slack.com/api/chat.postMessage", headers={'Content-Type':'application/json;charset=UTF-8', 'Authorization': 'Bearer %s' % slack_token}, json=data)
+    foo = requests.post("https://slack.com/api/chat.postMessage", headers={
+                        'Content-Type': 'application/json;charset=UTF-8', 'Authorization': 'Bearer %s' % slack_token}, json=data)
 
     print(foo.json())

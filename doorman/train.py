@@ -12,7 +12,6 @@ rekognition_collection_id = os.environ['REKOGNITION_COLLECTION_ID']
 
 
 def train(event, context):
-    # print(event['body'])
     data = parse_qs(event['body'])
     data = json.loads(data['payload'][0])
     print(data)
@@ -35,7 +34,7 @@ def train(event, context):
         requests.post(
             data['response_url'],
             headers={
-                'Content-Type':'application/json;charset=UTF-8',
+                'Content-Type': 'application/json;charset=UTF-8',
                 'Authorization': 'Bearer %s' % slack_token
             },
             json=message
@@ -43,10 +42,10 @@ def train(event, context):
         s3 = boto3.resource('s3')
         s3.Object(bucket_name, key).delete()
 
-
     if data['actions'][0]['name'] == 'username':
         user_id = data['actions'][0]['selected_options'][0]['value']
-        new_key = 'trained/%s/%s.jpg' % (user_id, hashlib.md5(key.encode('utf-8')).hexdigest())
+        new_key = 'trained/%s/%s.jpg' % (user_id,
+                                         hashlib.md5(key.encode('utf-8')).hexdigest())
 
         message = {
             "text": "Trained as %s" % user_id,
@@ -59,7 +58,8 @@ def train(event, context):
             ]
         }
         print(message)
-        requests.post(data['response_url'], headers={'Content-Type':'application/json;charset=UTF-8', 'Authorization': 'Bearer %s' % slack_token}, json=message)
+        requests.post(data['response_url'], headers={
+                      'Content-Type': 'application/json;charset=UTF-8', 'Authorization': 'Bearer %s' % slack_token}, json=message)
 
         # response is send, start training
         client = boto3.client('rekognition')
@@ -77,7 +77,8 @@ def train(event, context):
 
         # move the s3 file to the 'trained' location
         s3 = boto3.resource('s3')
-        s3.Object(bucket_name, new_key).copy_from(CopySource='%s/%s' % (bucket_name, key))
+        s3.Object(bucket_name, new_key).copy_from(
+            CopySource='%s/%s' % (bucket_name, key))
         s3.ObjectAcl(bucket_name, new_key).put(ACL='public-read')
         s3.Object(bucket_name, key).delete()
 
