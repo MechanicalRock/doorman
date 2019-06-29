@@ -54,10 +54,11 @@ functions:
       - http:
           path: faces/train
           method: post
-
-  # find person, function for greengrass device
-  find-person:
-    handler: find_person.function_handler
+  decode:
+    handler: handler.decode
+    events:
+      - iot:
+          sql: SELECT *, FROM '${self:custom.environment.IOT_TOPIC}'
 
 plugins:
   - serverless-python-requirements

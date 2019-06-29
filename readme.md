@@ -58,7 +58,11 @@ serverless deploy
 ### DeepLens Setup
 
 - Go into the deeplens console, and create a project, select the "Object detection" model
-- Remove the `deeplens-object-detection` function, and add the function for `find_person`
+- Remove the `deeplens-face-detection` function, and add the function for `facecrop.function_handler`
+
+**NOTE**: Jump down to the _DeepLens is Flakey_ section of this guide for more details around deploying the SAM alternative of the detect function
+
+- take the Deeplens ID from the Device console and place it in `IOT_TOPIC` in `env.yml`
 
 ![DeepLens Setup 01](img/deeplens-setup-01.png)
 
@@ -86,7 +90,31 @@ export AWS_SESSION_TOKEN=$(echo ${response} | jq -r '.Credentials.SessionToken')
 
 ### DeepLens is Flakey
 
-Issues with DeepLens running the person detection code
+Issues with DeepLens running the person detection code. I would like to be able to deploy it in the serverless.yaml config under the following
+
+```yaml
+  detect:
+    runtime: python2.7
+    timeout: 3
+    memorySize: 1536
+    handler: deeplens/facecrop.function_handler
+```
+
+I'm working towards this however in the meantime the following deployment method might be better
+
+```bash
+aws s3 mb s3://mr-virtual-concierge-sam-dev
+
+aws cloudformation package \
+  --template-file template.yaml \
+  --output-template-file template-out.yaml \
+  --s3-bucket mr-virtual-concierge-sam-dev
+
+aws cloudformation deploy \
+  --template-file template-out.yaml \
+  --stack-name "mr-virtual-concierge-dev-sam"  \
+  --capabilities CAPABILITY_IAM
+```
 
 ## Attribution
 
