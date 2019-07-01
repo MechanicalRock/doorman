@@ -10,7 +10,7 @@ rekognition_collection_id = os.environ['REKOGNITION_COLLECTION_ID']
 
 
 def decode(event, context):
-    face = base64.b64decode(event['image_string'])
+    face = base64.b64decode(event['face'])
     s3 = boto3.client('s3')
     file_name = 'incoming/image-'+time.strftime("%Y%m%d-%H%M%S")+'.jpg'
     response = s3.put_object(Body=face, Bucket=bucket_name, Key=file_name)
