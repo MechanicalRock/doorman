@@ -51,29 +51,29 @@ def guess(event, context):
         s3.ObjectAcl(bucket_name, new_key).put(ACL='public-read')
         s3.Object(bucket_name, key).delete()
 
-        # fetch the username for this user_id
-        data = {
-            "token": slack_token,
-            "user": user_id
-        }
-        print(data)
-        resp = requests.post("https://slack.com/api/users.info", data=data)
-        print(resp.content)
-        print(resp.json())
-        username = resp.json()['user']['name']
+        # # fetch the username for this user_id
+        # data = {
+        #     "token": slack_token,
+        #     "user": user_id
+        # }
+        # print(data)
+        # resp = requests.post("https://slack.com/api/users.info", data=data)
+        # print(resp.content)
+        # print(resp.json())
+        # username = resp.json()['user']['name']
 
-        data = {
-            "channel": slack_channel_id,
-            "text": "Welcome @%s" % username,
-            "link_names": True,
-            "attachments": [
-                {
-                    "image_url": "https://s3.amazonaws.com/%s/%s" % (bucket_name, new_key),
-                    "fallback": "Nope?",
-                    "attachment_type": "default",
-                }
-            ]
-        }
-        resp = requests.post("https://slack.com/api/chat.postMessage", headers={
-                             'Content-Type': 'application/json;charset=UTF-8', 'Authorization': 'Bearer %s' % slack_token}, json=data)
+        # data = {
+        #     "channel": slack_channel_id,
+        #     "text": "Welcome @%s" % username,
+        #     "link_names": True,
+        #     "attachments": [
+        #         {
+        #             "image_url": "https://s3.amazonaws.com/%s/%s" % (bucket_name, new_key),
+        #             "fallback": "Nope?",
+        #             "attachment_type": "default",
+        #         }
+        #     ]
+        # }
+        # resp = requests.post("https://slack.com/api/chat.postMessage", headers={
+        #                      'Content-Type': 'application/json;charset=UTF-8', 'Authorization': 'Bearer %s' % slack_token}, json=data)
         return {}
