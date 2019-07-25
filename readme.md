@@ -72,7 +72,7 @@ That should be it. Whenever the Deeplens rekognizes someone, it will upload into
 
 ## Architecture
 
-![Architecture](img/architecture.jpg)
+![Architecture](img/architecture.png)
 
 ## Known Issues
 
@@ -81,7 +81,7 @@ That should be it. Whenever the Deeplens rekognizes someone, it will upload into
 When deploying with Serverless using MFA and alternative profiles you'll need to set the credentials as environment variables yourself
 
 ```bash
-response=$(aws sts assume-role --role-arn arn:aws:iam::12345678910:role/DevOpsRole --role-session-name "Serverless" --profile sandbox)
+response=$(aws sts assume-role --role-arn arn:aws:iam::676416293960:role/DevOpsRole --role-session-name "Serverless" --profile mr-sandbox-vc)
 # Set Variables
 export AWS_ACCESS_KEY_ID=$(echo $response | jq -r '.Credentials.AccessKeyId')
 export AWS_SECRET_ACCESS_KEY=$(echo $response | jq -r '.Credentials.SecretAccessKey')
