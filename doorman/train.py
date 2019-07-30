@@ -44,11 +44,20 @@ def train(event, context):
 
     if data['actions'][0]['name'] == 'username':
         user_id = data['actions'][0]['selected_options'][0]['value']
+
+        # fetch the username for this user_id
+        user_data = {
+            "token": slack_token,
+            "user": user_id
+        }
+        resp = requests.post("https://slack.com/api/users.info", data=user_data)
+        username = resp.json()['user']['name']
+
         new_key = 'trained/%s/%s.jpg' % (user_id,
                                          hashlib.md5(key.encode('utf-8')).hexdigest())
 
         message = {
-            "text": "Trained as %s" % user_id,
+            "text": "Trained as %s (%s)" % (username, user_id),
             "attachments": [
                 {
                     "image_url": "https://s3.amazonaws.com/%s/%s" % (bucket_name, new_key),
