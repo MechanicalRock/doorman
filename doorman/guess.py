@@ -33,42 +33,47 @@ def guess(event, context):
     if len(resp['FaceMatches']) == 0:
         # no known faces detected, let the users decide in slack
         print("No matches found, sending to unknown")
-        new_key = 'unknown/%s.jpg' % hashlib.md5(key.encode('utf-8')).hexdigest()
-        s3.Object(bucket_name, new_key).copy_from(CopySource='%s/%s' % (bucket_name, key))
+        new_key = 'unknown/%s.jpg' % hashlib.md5(
+            key.encode('utf-8')).hexdigest()
+        s3.Object(bucket_name, new_key).copy_from(
+            CopySource='%s/%s' % (bucket_name, key))
         s3.ObjectAcl(bucket_name, new_key).put(ACL='public-read')
         s3.Object(bucket_name, key).delete()
     else:
-        print ("Face found")
-        print (resp)
+        print("Face found")
+        print(resp)
         # move image
         user_id = resp['FaceMatches'][0]['Face']['ExternalImageId']
-        new_key = 'detected/%s/%s.jpg' % (user_id, hashlib.md5(key.encode('utf-8')).hexdigest())
-        s3.Object(bucket_name, new_key).copy_from(CopySource='%s/%s' % (event_bucket_name, key))
+        new_key = 'detected/%s/%s.jpg' % (user_id,
+                                          hashlib.md5(key.encode('utf-8')).hexdigest())
+        s3.Object(bucket_name, new_key).copy_from(
+            CopySource='%s/%s' % (event_bucket_name, key))
         s3.ObjectAcl(bucket_name, new_key).put(ACL='public-read')
         s3.Object(bucket_name, key).delete()
 
-        # fetch the username for this user_id
-        data = {
-            "token": slack_token,
-            "user": user_id
-        }
-        print(data)
-        resp = requests.post("https://slack.com/api/users.info", data=data)
-        print(resp.content)
-        print(resp.json())
-        username = resp.json()['user']['name']
+        # # fetch the username for this user_id
+        # data = {
+        #     "token": slack_token,
+        #     "user": user_id
+        # }
+        # print(data)
+        # resp = requests.post("https://slack.com/api/users.info", data=data)
+        # print(resp.content)
+        # print(resp.json())
+        # username = resp.json()['user']['name']
 
-        data = {
-            "channel": slack_channel_id,
-            "text": "Welcome @%s" % username,
-            "link_names": True,
-            "attachments": [
-                {
-                    "image_url": "https://s3.amazonaws.com/%s/%s" % (bucket_name, new_key),
-                    "fallback": "Nope?",
-                    "attachment_type": "default",
-                }
-            ]
-        }
-        resp = requests.post("https://slack.com/api/chat.postMessage", headers={'Content-Type':'application/json;charset=UTF-8', 'Authorization': 'Bearer %s' % slack_token}, json=data)
+        # data = {
+        #     "channel": slack_channel_id,
+        #     "text": "Welcome @%s" % username,
+        #     "link_names": True,
+        #     "attachments": [
+        #         {
+        #             "image_url": "https://s3.amazonaws.com/%s/%s" % (bucket_name, new_key),
+        #             "fallback": "Nope?",
+        #             "attachment_type": "default",
+        #         }
+        #     ]
+        # }
+        # resp = requests.post("https://slack.com/api/chat.postMessage", headers={
+        #                      'Content-Type': 'application/json;charset=UTF-8', 'Authorization': 'Bearer %s' % slack_token}, json=data)
         return {}

@@ -1,0 +1,19 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: 'AWS::Serverless-2016-10-31'
+
+Resources:
+  DeepLensFaceDetection:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      FunctionName: mr-virtual-concierge-dev-detect
+      Runtime: python2.7
+      Handler: facecrop.function_handler
+      CodeUri: ./deeplens
+      MemorySize: 1536
+      Timeout: 3
+
+  DeepLensFaceDetectionVersion:
+    Type: AWS::Lambda::Version
+    Properties:
+      FunctionName:
+        Ref: DeepLensFaceDetection

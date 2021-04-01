@@ -21,3 +21,5 @@ var/
 
 # Serverless directories
 .serverless
+env.yml
+template-out.yaml

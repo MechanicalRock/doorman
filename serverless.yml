@@ -1,27 +1,15 @@
-# Welcome to Serverless!
-#
-# This file is the main config file for your service.
-# It's very minimal at this point and uses default values.
-# You can always add more config options for more control.
-# We've included some commented out config examples here.
-# Just uncomment any of them to get that config option.
-#
-# For full config options, check the docs:
-#    docs.serverless.com
-#
-# Happy Coding!
+service: mr-virtual-concierge
 
-service: doorman
+custom:
+  pythonRequirements:
+    dockerizePip: true
+  environment: ${file(env.yml):dev}
 
 provider:
   name: aws
-  runtime: python3.6
-
-# you can overwrite defaults here
+  runtime: python3.7
   stage: dev
-#  region: us-east-1
-
-# you can add statements to the Lambda function's IAM Role here
+  region: us-east-1
   iamRoleStatements:
     - Effect: "Allow"
       Action:
@@ -36,44 +24,19 @@ provider:
        - "s3:GetObject"
        - "s3:DeleteObject"
       Resource:
-        - "arn:aws:s3:::${env:BUCKET_NAME}/*"
-
- #   - Effect: "Allow"
- #     Action:
- #       - "s3:ListBucket"
- #     Resource: { "Fn::Join" : ["", ["arn:aws:s3:::", { "Ref" : "ServerlessDeploymentBucket" } ] ]  }
- #   - Effect: "Allow"
- #     Action:
- #       - "s3:PutObject"
- #     Resource:
- #       Fn::Join:
- #         - ""
- #         - - "arn:aws:s3:::"
- #           - "Ref" : "ServerlessDeploymentBucket"
- #           - "/*"
-
-# you can define service wide environment variables here
+        - "arn:aws:s3:::${self:custom.environment.BUCKET_NAME}/*"
   environment:
-    BUCKET_NAME: ${env:BUCKET_NAME}
-    SLACK_API_TOKEN: ${env:SLACK_API_TOKEN}
-    SLACK_CHANNEL_ID: ${env:SLACK_CHANNEL_ID}
-    REKOGNITION_COLLECTION_ID: ${env:REKOGNITION_COLLECTION_ID}
-# you can add packaging information here
-#package:
-#  include:
-#    - include-me.py
-#    - include-me-dir/**
-#  exclude:
-#    - exclude-me.py
-#    - exclude-me-dir/**
-
+    BUCKET_NAME: ${self:custom.environment.BUCKET_NAME}
+    SLACK_API_TOKEN: ${self:custom.environment.SLACK_API_TOKEN}
+    SLACK_CHANNEL_ID: ${self:custom.environment.SLACK_CHANNEL_ID}
+    REKOGNITION_COLLECTION_ID: ${self:custom.environment.REKOGNITION_COLLECTION_ID}
 
 functions:
   guess:
     handler: handler.guess
     events:
       - s3:
-          bucket: ${env:BUCKET_NAME}
+          bucket: ${self:custom.environment.BUCKET_NAME}
           event: s3:ObjectCreated:*
           rules:
             - prefix: incoming/
@@ -81,7 +44,7 @@ functions:
     handler: handler.unknown
     events:
       - s3:
-          bucket: ${env:BUCKET_NAME}
+          bucket: ${self:custom.environment.BUCKET_NAME}
           event: s3:ObjectCreated:*
           rules:
             - prefix: unknown/
@@ -91,18 +54,11 @@ functions:
       - http:
           path: faces/train
           method: post
+  decode:
+    handler: handler.decode
+    events:
+      - iot:
+          sql: SELECT *, FROM '${self:custom.environment.IOT_TOPIC}'
 
-  # find person, function for greengrass device
-  find-person:
-    handler: find_person.function_handler
-
-# resources:
-#   Resources:
-#     S3BucketDoormanfaces:
-#       Type: AWS::S3::Bucket
-#       Properties:
-#         BucketName: ${env:BUCKET_NAME}
-#         # add additional custom bucket configuration here
-#
 plugins:
   - serverless-python-requirements
