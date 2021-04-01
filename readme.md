@@ -29,25 +29,30 @@ endpoints:
 
 ### Slack App
 
-- Go to the [slack api](https://api.slack.com/apps), and click "create a new app".
+- Go to the [Slack API](https://api.slack.com/apps), and click "create a new app".
 - Give a name, and select your workspace
 
 ![Slack Setup 01](img/slack-app-setup-01.png)
 
-- Incoming webhooks
-- Interactive components (use the api gateway endpoint that you noted before, ignore `Load URL`)
-
-![Slack Setup 02](img/slack-app-setup-02.png)
-
-- Permissions: Install the app in your workspace, and note the token. You'll need `chat:write:bot`, `channels:read` and `incoming-webhook`.
-
-![Slack Setup 03](img/slack-app-setup-03.png)
+- Enable Incoming webhooks
 
 - Copy this OAuth code into the `SLACK_API_TOKEN` field in `env.yml`.
 
+![Slack Setup 02](img/slack-app-setup-02.png)
+
+
+- Permissions: Install the app in your workspace, and note the token. You'll need `channels:read`, `chat:write`, `chat:write:customize`, `incoming-webhook`, `users:read` and `users:write`.
+
+![Slack Setup 03](img/slack-app-setup-03.png)
+
+- Interactive components (use the api gateway endpoint that you noted before, ignore `Load URL`)
+
 ![Slack Setup 04](img/slack-app-setup-04.png)
 
-#### Re-deploy Serverless App
+- Use [Slack API conversations.list](https://https://api.slack.com/methods/conversations.list) to determine the channel id. Copy this id into the `SLACK_CHANNEL_ID` field in `env.yml`
+
+
+### Re-deploy Serverless App
 
 Now that all the fields in the env.yml file are setup, re-deploy the serverless app
 
