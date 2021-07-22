@@ -1,0 +1,19 @@
+{
+  "Rules": [
+    {
+      "Prefix": "unknown",
+      "Status": "Enabled",
+      "ExpirationInDays": 1
+    },
+    {
+      "Prefix": "detected",
+      "Status": "Enabled",
+      "ExpirationInDays": 1
+    },
+    {
+      "Prefix": "trained",
+      "Status": "Enabled",
+      "ExpirationInDays": 1
+    }
+  ]
+}
