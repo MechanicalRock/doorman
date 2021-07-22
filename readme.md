@@ -110,8 +110,6 @@ I'm working towards this however in the meantime the following deployment method
 ```bash
 aws s3 mb s3://mr-virtual-concierge-sam-dev
 
-aws s3 put-bucket-lifecycle-configuration --bucket mr-virtual-concierge-sam-dev --lifecycle-configuration  file://lifecycle.json
-
 aws cloudformation package \
   --template-file template.yaml \
   --output-template-file template-out.yaml \
@@ -121,6 +119,12 @@ aws cloudformation deploy \
   --template-file template-out.yaml \
   --stack-name "mr-virtual-concierge-dev-sam"  \
   --capabilities CAPABILITY_IAM
+```
+
+Add lifecycle policy to the VC bucket:
+
+```
+aws s3api put-bucket-lifecycle-configuration --profile mrvirtual2 --region us-east-1 --bucket virtual-concierge-dev --lifecycle-configuration  file://lifecycle.json
 ```
 
 ## Attribution
