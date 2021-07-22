@@ -3,17 +3,30 @@
     {
       "Prefix": "unknown",
       "Status": "Enabled",
-      "ExpirationInDays": 1
+      "Expiration": {
+        "Days": 1
+      }
     },
     {
       "Prefix": "detected",
       "Status": "Enabled",
-      "ExpirationInDays": 1
+      "Expiration": {
+        "Days": 1
+      }
     },
     {
       "Prefix": "trained",
       "Status": "Enabled",
-      "ExpirationInDays": 1
+      "Expiration": {
+        "Days": 1
+      }
+    },
+    {
+      "Prefix": "incoming",
+      "Status": "Enabled",
+      "Expiration": {
+        "Days": 1
+      }
     }
   ]
 }
