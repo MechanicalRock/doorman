@@ -110,6 +110,8 @@ I'm working towards this however in the meantime the following deployment method
 ```bash
 aws s3 mb s3://mr-virtual-concierge-sam-dev
 
+aws s3 put-bucket-lifecycle-configuration --bucket mr-virtual-concierge-sam-dev --lifecycle-configuration  file://lifecycle.json
+
 aws cloudformation package \
   --template-file template.yaml \
   --output-template-file template-out.yaml \
