@@ -47,7 +47,7 @@ def unknown(event, context):
         ]
     }
     print(data)
-    foo = requests.post("https://slack.com/api/chat.postMessage", headers={
+    foo = requests.post("https://hooks.slack.com/services/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", headers={
                         'Content-Type': 'application/json;charset=UTF-8', 'Authorization': 'Bearer %s' % slack_token}, json=data)
 
-    print(foo.json())
+    print(foo)
