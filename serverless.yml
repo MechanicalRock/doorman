@@ -1,4 +1,4 @@
-service: mr-virtual-concierge
+service: virtual-concierge
 
 custom:
   pythonRequirements:
@@ -7,7 +7,7 @@ custom:
 
 provider:
   name: aws
-  runtime: python3.7
+  runtime: python3.8
   stage: dev
   region: us-east-1
   iamRoleStatements:
@@ -19,10 +19,10 @@ provider:
       Resource: "*"
     - Effect: "Allow"
       Action:
-       - "s3:PutObject"
-       - "s3:PutObjectAcl"
-       - "s3:GetObject"
-       - "s3:DeleteObject"
+        - "s3:PutObject"
+        - "s3:PutObjectAcl"
+        - "s3:GetObject"
+        - "s3:DeleteObject"
       Resource:
         - "arn:aws:s3:::${self:custom.environment.BUCKET_NAME}/*"
   environment:
@@ -31,6 +31,16 @@ provider:
     SLACK_CHANNEL_ID: ${self:custom.environment.SLACK_CHANNEL_ID}
     REKOGNITION_COLLECTION_ID: ${self:custom.environment.REKOGNITION_COLLECTION_ID}
 
+resources:
+  Resources:
+    MrVirtualConcierge:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${self:custom.environment.BUCKET_NAME}
+        BucketEncryption:
+          ServerSideEncryptionConfiguration:
+            - ServerSideEncryptionByDefault:
+                SSEAlgorithm: AES256
 functions:
   guess:
     handler: handler.guess
@@ -38,6 +48,7 @@ functions:
       - s3:
           bucket: ${self:custom.environment.BUCKET_NAME}
           event: s3:ObjectCreated:*
+          existing: true
           rules:
             - prefix: incoming/
   unknown:
@@ -46,6 +57,7 @@ functions:
       - s3:
           bucket: ${self:custom.environment.BUCKET_NAME}
           event: s3:ObjectCreated:*
+          existing: true
           rules:
             - prefix: unknown/
   train:
